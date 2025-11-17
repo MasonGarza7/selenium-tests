@@ -7,10 +7,17 @@ __pycache__/
 .venv/
 env/
 venv/
-results/        # Python results folder
 *.log
 *.sqlite3
 *.db
+
+# Python test artifacts
+python_basics/results/
+python_basics/results/logs/
+python_basics/results/screenshots/
+python_basics/results/**/*.html
+python_basics/results/**/*.json
+
 
 ############################################
 # JAVASCRIPT / NODE
@@ -19,39 +26,42 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-package-lock.json
+
 
 # Local environment variables
 .env
 
-############################################
-# SELENIUM (JS)
-############################################
-# Test result artifacts
-results/logs/
-results/screenshots/
-results/report/
-results/**/*.html
-results/**/*.json
+# JavaScript test artifacts
+javascript_basics/results/
+javascript_basics/results/logs/
+javascript_basics/results/screenshots/
+javascript_basics/results/report/
+javascript_basics/results/**/*.html
+javascript_basics/results/**/*.json
 
 # Mochawesome output (auto-generated)
+javascript_basics/mochawesome-report/
 mochawesome-report/
 mochawesome.json
 
+
 ############################################
-# TYPEScript (if you return to TS later)
+# TYPESCRIPT (if used later)
 ############################################
 *.tsbuildinfo
 dist/
 build/
 
+
 ############################################
-# TEMP FILES (created during File Upload tests)
+# TEMP FILES (from File Upload tests)
 ############################################
+javascript_basics/temp/
 temp/
 *.tmp
 *.temp
 upload_test_file.txt
+
 
 ############################################
 # OS JUNK
@@ -59,12 +69,14 @@ upload_test_file.txt
 .DS_Store
 Thumbs.db
 
+
 ############################################
 # IDE / EDITOR
 ############################################
 .vscode/
 .idea/
 *.iml
+
 
 ############################################
 # MISC
