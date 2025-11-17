@@ -1,11 +1,73 @@
-# Python
+############################################
+# PYTHON
+############################################
 __pycache__/
 *.pyc
 .pytest_cache/
 .venv/
-results/
+env/
+venv/
+results/        # Python results folder
 *.log
+*.sqlite3
+*.db
 
-# OS
+############################################
+# JAVASCRIPT / NODE
+############################################
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Local environment variables
+.env
+
+############################################
+# SELENIUM (JS)
+############################################
+# Test result artifacts
+results/logs/
+results/screenshots/
+results/report/
+results/**/*.html
+results/**/*.json
+
+# Mochawesome output (auto-generated)
+mochawesome-report/
+mochawesome.json
+
+############################################
+# TYPEScript (if you return to TS later)
+############################################
+*.tsbuildinfo
+dist/
+build/
+
+############################################
+# TEMP FILES (created during File Upload tests)
+############################################
+temp/
+*.tmp
+*.temp
+upload_test_file.txt
+
+############################################
+# OS JUNK
+############################################
 .DS_Store
 Thumbs.db
+
+############################################
+# IDE / EDITOR
+############################################
+.vscode/
+.idea/
+*.iml
+
+############################################
+# MISC
+############################################
+coverage/
+logs/

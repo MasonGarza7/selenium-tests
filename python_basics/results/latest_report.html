@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title id="head-title">latest_report.html</title>
+      <style type="text/css">body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  /* do not increase min-width as some may use split screens */
+  min-width: 800px;
+  color: #999;
+}
+
+h1 {
+  font-size: 24px;
+  color: black;
+}
+
+h2 {
+  font-size: 16px;
+  color: black;
+}
+
+p {
+  color: black;
+}
+
+a {
+  color: #999;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+/******************************
+ * SUMMARY INFORMATION
+ ******************************/
+#environment td {
+  padding: 5px;
+  border: 1px solid #e6e6e6;
+  vertical-align: top;
+}
+#environment tr:nth-child(odd) {
+  background-color: #f6f6f6;
+}
+#environment ul {
+  margin: 0;
+  padding: 0 20px;
+}
+
+/******************************
+ * TEST RESULT COLORS
+ ******************************/
+span.passed,
+.passed .col-result {
+  color: green;
+}
+
+span.skipped,
+span.xfailed,
+span.rerun,
+.skipped .col-result,
+.xfailed .col-result,
+.rerun .col-result {
+  color: orange;
+}
+
+span.error,
+span.failed,
+span.xpassed,
+.error .col-result,
+.failed .col-result,
+.xpassed .col-result {
+  color: red;
+}
+
+.col-links__extra {
+  margin-right: 3px;
+}
+
+/******************************
+ * RESULTS TABLE
+ *
+ * 1. Table Layout
+ * 2. Extra
+ * 3. Sorting items
+ *
+ ******************************/
+/*------------------
+ * 1. Table Layout
+ *------------------*/
+#results-table {
+  border: 1px solid #e6e6e6;
+  color: #999;
+  font-size: 12px;
+  width: 100%;
+}
+#results-table th,
+#results-table td {
+  padding: 5px;
+  border: 1px solid #e6e6e6;
+  text-align: left;
+}
+#results-table th {
+  font-weight: bold;
+}
+
+/*------------------
+ * 2. Extra
+ *------------------*/
+.logwrapper {
+  max-height: 230px;
+  overflow-y: scroll;
+  background-color: #e6e6e6;
+}
+.logwrapper.expanded {
+  max-height: none;
+}
+.logwrapper.expanded .logexpander:after {
+  content: "collapse [-]";
+}
+.logwrapper .logexpander {
+  z-index: 1;
+  position: sticky;
+  top: 10px;
+  width: max-content;
+  border: 1px solid;
+  border-radius: 3px;
+  padding: 5px 7px;
+  margin: 10px 0 10px calc(100% - 80px);
+  cursor: pointer;
+  background-color: #e6e6e6;
+}
+.logwrapper .logexpander:after {
+  content: "expand [+]";
+}
+.logwrapper .logexpander:hover {
+  color: #000;
+  border-color: #000;
+}
+.logwrapper .log {
+  min-height: 40px;
+  position: relative;
+  top: -50px;
+  height: calc(100% + 50px);
+  border: 1px solid #e6e6e6;
+  color: black;
+  display: block;
+  font-family: "Courier New", Courier, monospace;
+  padding: 5px;
+  padding-right: 80px;
+  white-space: pre-wrap;
+}
+
+div.media {
+  border: 1px solid #e6e6e6;
+  float: right;
+  height: 240px;
+  margin: 0 5px;
+  overflow: hidden;
+  width: 320px;
+}
+
+.media-container {
+  display: grid;
+  grid-template-columns: 25px auto 25px;
+  align-items: center;
+  flex: 1 1;
+  overflow: hidden;
+  height: 200px;
+}
+
+.media-container--fullscreen {
+  grid-template-columns: 0px auto 0px;
+}
+
+.media-container__nav--right,
+.media-container__nav--left {
+  text-align: center;
+  cursor: pointer;
+}
+
+.media-container__viewport {
+  cursor: pointer;
+  text-align: center;
+  height: inherit;
+}
+.media-container__viewport img,
+.media-container__viewport video {
+  object-fit: cover;
+  width: 100%;
+  max-height: 100%;
+}
+
+.media__name,
+.media__counter {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  flex: 0 0 25px;
+  align-items: center;
+}
+
+.collapsible td:not(.col-links) {
+  cursor: pointer;
+}
+.collapsible td:not(.col-links):hover::after {
+  color: #bbb;
+  font-style: italic;
+  cursor: pointer;
+}
+
+.col-result {
+  width: 130px;
+}
+.col-result:hover::after {
+  content: " (hide details)";
+}
+
+.col-result.collapsed:hover::after {
+  content: " (show details)";
+}
+
+#environment-header h2:hover::after {
+  content: " (hide details)";
+  color: #bbb;
+  font-style: italic;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+#environment-header.collapsed h2:hover::after {
+  content: " (show details)";
+  color: #bbb;
+  font-style: italic;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/*------------------
+ * 3. Sorting items
+ *------------------*/
+.sortable {
+  cursor: pointer;
+}
+.sortable.desc:after {
+  content: " ";
+  position: relative;
+  left: 5px;
+  bottom: -12.5px;
+  border: 10px solid #4caf50;
+  border-bottom: 0;
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+.sortable.asc:after {
+  content: " ";
+  position: relative;
+  left: 5px;
+  bottom: 12.5px;
+  border: 10px solid #4caf50;
+  border-top: 0;
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+
+.hidden, .summary__reload__button.hidden {
+  display: none;
+}
+
+.summary__data {
+  flex: 0 0 550px;
+}
+.summary__reload {
+  flex: 1 1;
+  display: flex;
+  justify-content: center;
+}
+.summary__reload__button {
+  flex: 0 0 300px;
+  display: flex;
+  color: white;
+  font-weight: bold;
+  background-color: #4caf50;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.summary__reload__button:hover {
+  background-color: #46a049;
+}
+.summary__spacer {
+  flex: 0 0 550px;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+}
+
+.filters,
+.collapse {
+  display: flex;
+  align-items: center;
+}
+.filters button,
+.collapse button {
+  color: #999;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.filters button:hover,
+.collapse button:hover {
+  color: #ccc;
+}
+
+.filter__label {
+  margin-right: 10px;
+}
+
+      </style>
+    
+  </head>
+  <body>
+    <h1 id="title">latest_report.html</h1>
+    <p>Report generated on 10-Nov-2025 at 10:30:19 by <a href="https://pypi.python.org/pypi/pytest-html">pytest-html</a>
+        v4.1.1</p>
+    <div id="environment-header">
+      <h2>Environment</h2>
+    </div>
+    <table id="environment"></table>
+    <!-- TEMPLATES -->
+      <template id="template_environment_row">
+      <tr>
+        <td></td>
+        <td></td>
+      </tr>
+    </template>
+    <template id="template_results-table__body--empty">
+      <tbody class="results-table-row">
+        <tr id="not-found-message">
+          <td colspan="4">No results found. Check the filters.</th>
+        </tr>
+    </template>
+    <template id="template_results-table__tbody">
+      <tbody class="results-table-row">
+        <tr class="collapsible">
+        </tr>
+        <tr class="extras-row">
+          <td class="extra" colspan="4">
+            <div class="extraHTML"></div>
+            <div class="media">
+              <div class="media-container">
+                  <div class="media-container__nav--left"><</div>
+                  <div class="media-container__viewport">
+                    <img src="" />
+                    <video controls>
+                      <source src="" type="video/mp4">
+                    </video>
+                  </div>
+                  <div class="media-container__nav--right">></div>
+                </div>
+                <div class="media__name"></div>
+                <div class="media__counter"></div>
+            </div>
+            <div class="logwrapper">
+              <div class="logexpander"></div>
+              <div class="log"></div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </template>
+    <!-- END TEMPLATES -->
+    <div class="summary">
+      <div class="summary__data">
+        <h2>Summary</h2>
+        <div class="additional-summary prefix">
+        </div>
+        <p class="run-count">10 tests took 00:01:09.</p>
+        <p class="filter">(Un)check the boxes to filter the results.</p>
+        <div class="summary__reload">
+          <div class="summary__reload__button hidden" onclick="location.reload()">
+            <div>There are still tests running. <br />Reload this page to get the latest results!</div>
+          </div>
+        </div>
+        <div class="summary__spacer"></div>
+        <div class="controls">
+          <div class="filters">
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="failed" />
+            <span class="failed">1 Failed,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="passed" />
+            <span class="passed">9 Passed,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="skipped" disabled/>
+            <span class="skipped">0 Skipped,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="xfailed" disabled/>
+            <span class="xfailed">0 Expected failures,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="xpassed" disabled/>
+            <span class="xpassed">0 Unexpected passes,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="error" disabled/>
+            <span class="error">0 Errors,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="rerun" disabled/>
+            <span class="rerun">0 Reruns</span>
+          </div>
+          <div class="collapse">
+            <button id="show_all_details">Show all details</button>&nbsp;/&nbsp;<button id="hide_all_details">Hide all details</button>
+          </div>
+        </div>
+      </div>
+      <div class="additional-summary summary">
+      </div>
+      <div class="additional-summary postfix">
+      </div>
+    </div>
+    <table id="results-table">
+      <thead id="results-table-head">
+        <tr>
+          <th class="sortable" data-column-type="result">Result</th>
+          <th class="sortable" data-column-type="testId">Test</th>
+          <th class="sortable" data-column-type="duration">Duration</th>
+          <th>Links</th>
+        </tr>
+      </thead>
+    </table>
+  </body>
+  <footer>
+    <div id="data-container" data-jsonblob="{&#34;environment&#34;: {&#34;Python&#34;: &#34;3.11.9&#34;, &#34;Platform&#34;: &#34;Windows-10-10.0.19045-SP0&#34;, &#34;Packages&#34;: {&#34;pytest&#34;: &#34;8.4.2&#34;, &#34;pluggy&#34;: &#34;1.6.0&#34;}, &#34;Plugins&#34;: {&#34;html&#34;: &#34;4.1.1&#34;, &#34;metadata&#34;: &#34;3.1.1&#34;}}, &#34;tests&#34;: {&#34;tests/test_alerts.py::test_javascript_alerts&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/test_alerts.py::test_javascript_alerts&#34;, &#34;duration&#34;: &#34;00:00:05&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/test_alerts.py::test_javascript_alerts&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:05&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stderr setup -----------------------------\n2025-11-10 10:29:10 [INFO] Starting browser session...\n\n------------------------------ Captured log setup ------------------------------\nINFO     TestLogger:conftest.py:26 Starting browser session...\n\n----------------------------- Captured stderr call -----------------------------\n2025-11-10 10:29:12 [INFO] STARTING Test --- JavaScript Alerts ---\n2025-11-10 10:29:13 [INFO] Navigated to https://the-internet.herokuapp.com/javascript_alerts\n2025-11-10 10:29:13 [INFO] Triggering simple alert\n2025-11-10 10:29:13 [INFO] Alert text: I am a JS Alert\n2025-11-10 10:29:13 [INFO] Result after accepting simple alert: You successfully clicked an alert\n2025-11-10 10:29:13 [INFO] Triggering confirmation alert\n2025-11-10 10:29:13 [INFO] Alert text: I am a JS Confirm\n2025-11-10 10:29:13 [INFO] Result after dismissing confirm: You clicked: Cancel\n2025-11-10 10:29:13 [INFO] Result after accepting confirm: You clicked: Ok\n2025-11-10 10:29:13 [INFO] Triggering prompt alert\n2025-11-10 10:29:13 [INFO] Alert text: I am a JS prompt\n2025-11-10 10:29:13 [INFO] Result after submitting prompt: You entered: Mason\n2025-11-10 10:29:13 [INFO] ENDING Test --- Completed successfully: JavaScript Alerts ---\n\n------------------------------ Captured log call -------------------------------\nINFO     test_alerts:test_alerts.py:8 STARTING Test --- JavaScript Alerts ---\nINFO     test_alerts:test_alerts.py:12 Navigated to https://the-internet.herokuapp.com/javascript_alerts\nINFO     test_alerts:test_alerts.py:15 Triggering simple alert\nINFO     test_alerts:test_alerts.py:18 Alert text: I am a JS Alert\nINFO     test_alerts:test_alerts.py:21 Result after accepting simple alert: You successfully clicked an alert\nINFO     test_alerts:test_alerts.py:25 Triggering confirmation alert\nINFO     test_alerts:test_alerts.py:28 Alert text: I am a JS Confirm\nINFO     test_alerts:test_alerts.py:31 Result after dismissing confirm: You clicked: Cancel\nINFO     test_alerts:test_alerts.py:38 Result after accepting confirm: You clicked: Ok\nINFO     test_alerts:test_alerts.py:42 Triggering prompt alert\nINFO     test_alerts:test_alerts.py:45 Alert text: I am a JS prompt\nINFO     test_alerts:test_alerts.py:50 Result after submitting prompt: You entered: Mason\nINFO     test_alerts:test_alerts.py:53 ENDING Test --- Completed successfully: JavaScript Alerts ---\n\n--------------------------- Captured stderr teardown ---------------------------\n2025-11-10 10:29:13 [INFO] Closing browser session...\n\n---------------------------- Captured log teardown -----------------------------\nINFO     TestLogger:conftest.py:31 Closing browser session...&#34;}], &#34;tests/test_checkboxes.py::test_checkboxes_toggle&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/test_checkboxes.py::test_checkboxes_toggle&#34;, &#34;duration&#34;: &#34;00:00:05&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/test_checkboxes.py::test_checkboxes_toggle&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:05&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stderr setup -----------------------------\n2025-11-10 10:29:15 [INFO] Starting browser session...\n\n------------------------------ Captured log setup ------------------------------\nINFO     TestLogger:conftest.py:26 Starting browser session...\n\n----------------------------- Captured stderr call -----------------------------\n2025-11-10 10:29:16 [INFO] STARTING Test --- Checkboxes Toggle ---\n2025-11-10 10:29:18 [INFO] Navigated to https://the-internet.herokuapp.com/checkboxes\n2025-11-10 10:29:18 [INFO] Found 2 checkboxes\n2025-11-10 10:29:18 [INFO] Checkbox 1 initial state: False\n2025-11-10 10:29:18 [INFO] Checkbox 1 toggled state: True\n2025-11-10 10:29:18 [INFO] Checkbox 2 initial state: True\n2025-11-10 10:29:18 [INFO] Checkbox 2 toggled state: False\n2025-11-10 10:29:18 [INFO] ENDING Test --- Completed successfully: Checkboxes Toggle ---\n\n------------------------------ Captured log call -------------------------------\nINFO     test_checkboxes:test_checkboxes.py:7 STARTING Test --- Checkboxes Toggle ---\nINFO     test_checkboxes:test_checkboxes.py:11 Navigated to https://the-internet.herokuapp.com/checkboxes\nINFO     test_checkboxes:test_checkboxes.py:14 Found 2 checkboxes\nINFO     test_checkboxes:test_checkboxes.py:18 Checkbox 1 initial state: False\nINFO     test_checkboxes:test_checkboxes.py:23 Checkbox 1 toggled state: True\nINFO     test_checkboxes:test_checkboxes.py:18 Checkbox 2 initial state: True\nINFO     test_checkboxes:test_checkboxes.py:23 Checkbox 2 toggled state: False\nINFO     test_checkboxes:test_checkboxes.py:29 ENDING Test --- Completed successfully: Checkboxes Toggle ---\n\n--------------------------- Captured stderr teardown ---------------------------\n2025-11-10 10:29:18 [INFO] Closing browser session...\n\n---------------------------- Captured log teardown -----------------------------\nINFO     TestLogger:conftest.py:31 Closing browser session...&#34;}], &#34;tests/test_documentation_example.py::test_open_browser&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/test_documentation_example.py::test_open_browser&#34;, &#34;duration&#34;: &#34;00:00:04&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/test_documentation_example.py::test_open_browser&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:04&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stderr setup -----------------------------\n2025-11-10 10:29:21 [INFO] Starting browser session...\n\n------------------------------ Captured log setup ------------------------------\nINFO     TestLogger:conftest.py:26 Starting browser session...\n--------------------------- Captured stderr teardown ---------------------------\n2025-11-10 10:29:23 [INFO] Closing browser session...\n\n---------------------------- Captured log teardown -----------------------------\nINFO     TestLogger:conftest.py:31 Closing browser session...&#34;}], &#34;tests/test_dropdown.py::test_dropdown_selection&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/test_dropdown.py::test_dropdown_selection&#34;, &#34;duration&#34;: &#34;00:00:05&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/test_dropdown.py::test_dropdown_selection&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:05&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stderr setup -----------------------------\n2025-11-10 10:29:25 [INFO] Starting browser session...\n\n------------------------------ Captured log setup ------------------------------\nINFO     TestLogger:conftest.py:26 Starting browser session...\n\n----------------------------- Captured stderr call -----------------------------\n2025-11-10 10:29:26 [INFO] STARTING Test --- Dropdown Selection ---\n2025-11-10 10:29:28 [INFO] Navigated to https://the-internet.herokuapp.com/dropdown\n2025-11-10 10:29:28 [INFO] Located dropdown element\n2025-11-10 10:29:28 [INFO] Default selected option: &amp;#x27;Please select an option&amp;#x27;\n2025-11-10 10:29:28 [INFO] Selecting &amp;#x27;Option 1&amp;#x27;\n2025-11-10 10:29:28 [INFO] Selected option: &amp;#x27;Option 1&amp;#x27;\n2025-11-10 10:29:28 [INFO] Selecting &amp;#x27;Option 2&amp;#x27;\n2025-11-10 10:29:28 [INFO] Selected option: &amp;#x27;Option 2&amp;#x27;\n2025-11-10 10:29:28 [INFO] ENDING Test --- Completed successfully: Dropdown Selection ---\n\n------------------------------ Captured log call -------------------------------\nINFO     test_dropdown:test_dropdown.py:8 STARTING Test --- Dropdown Selection ---\nINFO     test_dropdown:test_dropdown.py:12 Navigated to https://the-internet.herokuapp.com/dropdown\nINFO     test_dropdown:test_dropdown.py:16 Located dropdown element\nINFO     test_dropdown:test_dropdown.py:20 Default selected option: &amp;#x27;Please select an option&amp;#x27;\nINFO     test_dropdown:test_dropdown.py:24 Selecting &amp;#x27;Option 1&amp;#x27;\nINFO     test_dropdown:test_dropdown.py:27 Selected option: &amp;#x27;Option 1&amp;#x27;\nINFO     test_dropdown:test_dropdown.py:31 Selecting &amp;#x27;Option 2&amp;#x27;\nINFO     test_dropdown:test_dropdown.py:34 Selected option: &amp;#x27;Option 2&amp;#x27;\nINFO     test_dropdown:test_dropdown.py:37 ENDING Test --- Completed successfully: Dropdown Selection ---\n\n--------------------------- Captured stderr teardown ---------------------------\n2025-11-10 10:29:28 [INFO] Closing browser session...\n\n---------------------------- Captured log teardown -----------------------------\nINFO     TestLogger:conftest.py:31 Closing browser session...&#34;}], &#34;tests/test_dynamic_controls.py::test_dynamic_controls&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/test_dynamic_controls.py::test_dynamic_controls&#34;, &#34;duration&#34;: &#34;00:00:18&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/test_dynamic_controls.py::test_dynamic_controls&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:18&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stderr setup -----------------------------\n2025-11-10 10:29:30 [INFO] Starting browser session...\n\n------------------------------ Captured log setup ------------------------------\nINFO     TestLogger:conftest.py:26 Starting browser session...\n\n----------------------------- Captured stderr call -----------------------------\n2025-11-10 10:29:31 [INFO] STARTING Test --- Dynamic Controls ---\n2025-11-10 10:29:33 [INFO] Navigated to https://the-internet.herokuapp.com/dynamic_controls\n2025-11-10 10:29:33 [INFO] Clicking &amp;#x27;Remove&amp;#x27; button to remove checkbox\n2025-11-10 10:29:33 [INFO] Waiting for checkbox to be removed\n2025-11-10 10:29:36 [INFO] Message after removal: It&amp;#x27;s gone!\n2025-11-10 10:29:36 [INFO] Clicking &amp;#x27;Add&amp;#x27; button to add checkbox back\n2025-11-10 10:29:36 [INFO] Waiting for checkbox to reappear\n2025-11-10 10:29:39 [INFO] Message after adding: It&amp;#x27;s back!\n2025-11-10 10:29:39 [INFO] Clicking &amp;#x27;Enable&amp;#x27; button to activate input field\n2025-11-10 10:29:39 [INFO] Waiting for input field to become enabled\n2025-11-10 10:29:42 [INFO] Message after enabling: It&amp;#x27;s enabled!\n2025-11-10 10:29:42 [INFO] Clicking &amp;#x27;Disable&amp;#x27; button to deactivate input field\n2025-11-10 10:29:42 [INFO] Waiting for input field to become disabled\n2025-11-10 10:29:45 [INFO] Message after disabling: It&amp;#x27;s disabled!\n2025-11-10 10:29:45 [INFO] ENDING Test --- Completed successfully: Dynamic Controls ---\n\n------------------------------ Captured log call -------------------------------\nINFO     test_dynamic_controls:test_dynamic_controls.py:9 STARTING Test --- Dynamic Controls ---\nINFO     test_dynamic_controls:test_dynamic_controls.py:13 Navigated to https://the-internet.herokuapp.com/dynamic_controls\nINFO     test_dynamic_controls:test_dynamic_controls.py:18 Clicking &amp;#x27;Remove&amp;#x27; button to remove checkbox\nINFO     test_dynamic_controls:test_dynamic_controls.py:22 Waiting for checkbox to be removed\nINFO     test_dynamic_controls:test_dynamic_controls.py:25 Message after removal: It&amp;#x27;s gone!\nINFO     test_dynamic_controls:test_dynamic_controls.py:29 Clicking &amp;#x27;Add&amp;#x27; button to add checkbox back\nINFO     test_dynamic_controls:test_dynamic_controls.py:33 Waiting for checkbox to reappear\nINFO     test_dynamic_controls:test_dynamic_controls.py:36 Message after adding: It&amp;#x27;s back!\nINFO     test_dynamic_controls:test_dynamic_controls.py:40 Clicking &amp;#x27;Enable&amp;#x27; button to activate input field\nINFO     test_dynamic_controls:test_dynamic_controls.py:44 Waiting for input field to become enabled\nINFO     test_dynamic_controls:test_dynamic_controls.py:47 Message after enabling: It&amp;#x27;s enabled!\nINFO     test_dynamic_controls:test_dynamic_controls.py:51 Clicking &amp;#x27;Disable&amp;#x27; button to deactivate input field\nINFO     test_dynamic_controls:test_dynamic_controls.py:55 Waiting for input field to become disabled\nINFO     test_dynamic_controls:test_dynamic_controls.py:58 Message after disabling: It&amp;#x27;s disabled!\nINFO     test_dynamic_controls:test_dynamic_controls.py:61 ENDING Test --- Completed successfully: Dynamic Controls ---\n\n--------------------------- Captured stderr teardown ---------------------------\n2025-11-10 10:29:45 [INFO] Closing browser session...\n\n---------------------------- Captured log teardown -----------------------------\nINFO     TestLogger:conftest.py:31 Closing browser session...&#34;}], &#34;tests/test_failure_example.py::test_intentional_failure_example&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;tests/test_failure_example.py::test_intentional_failure_example&#34;, &#34;duration&#34;: &#34;00:00:05&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/test_failure_example.py::test_intentional_failure_example&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:05&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;driver = &amp;lt;selenium.webdriver.chrome.webdriver.WebDriver (session=&amp;quot;16b7aea80f5138d6d464c2d6cd2a387e&amp;quot;)&amp;gt;\n\n    def test_intentional_failure_example(driver):\n        logger.info(&amp;quot;Starting Test: Intentional Failure Example&amp;quot;)\n    \n        url = &amp;quot;https://the-internet.herokuapp.com/&amp;quot;\n        driver.get(url)\n        logger.info(f&amp;quot;Navigated to {url}&amp;quot;)\n    \n        # Intentionally incorrect assertion\n        logger.info(&amp;quot;Attempting to locate header and assert incorrect text&amp;quot;)\n        header = driver.find_element(By.TAG_NAME, &amp;quot;h1&amp;quot;).text\n        logger.info(f&amp;quot;Found header text: &amp;#x27;{header}&amp;#x27;&amp;quot;)\n    \n        # This assertion is intentionally wrong to trigger a failure\n&amp;gt;       assert header == &amp;quot;This text does not exist&amp;quot;, &amp;quot;Intentional failure triggered&amp;quot;\nE       AssertionError: Intentional failure triggered\nE       assert &amp;#x27;Welcome to the-internet&amp;#x27; == &amp;#x27;This text does not exist&amp;#x27;\nE         \nE         - This text does not exist\nE         + Welcome to the-internet\n\ntests\\test_failure_example.py:19: AssertionError\n\n---------------------------- Captured stderr setup -----------------------------\n2025-11-10 10:29:48 [INFO] Starting browser session...\n\n------------------------------ Captured log setup ------------------------------\nINFO     TestLogger:conftest.py:26 Starting browser session...\n\n----------------------------- Captured stderr call -----------------------------\n2025-11-10 10:29:49 [INFO] Starting Test: Intentional Failure Example\n2025-11-10 10:29:50 [INFO] Navigated to https://the-internet.herokuapp.com/\n2025-11-10 10:29:50 [INFO] Attempting to locate header and assert incorrect text\n2025-11-10 10:29:50 [INFO] Found header text: &amp;#x27;Welcome to the-internet&amp;#x27;\n\n------------------------------ Captured log call -------------------------------\nINFO     test_failure_example:test_failure_example.py:7 Starting Test: Intentional Failure Example\nINFO     test_failure_example:test_failure_example.py:11 Navigated to https://the-internet.herokuapp.com/\nINFO     test_failure_example:test_failure_example.py:14 Attempting to locate header and assert incorrect text\nINFO     test_failure_example:test_failure_example.py:16 Found header text: &amp;#x27;Welcome to the-internet&amp;#x27;\n\n--------------------------- Captured stderr teardown ---------------------------\n2025-11-10 10:29:50 [ERROR] Test failed: test_intentional_failure_example\n2025-11-10 10:29:50 [ERROR] Screenshot saved at: Z:\\1 Learning Selenium\\python_basics\\results\\screenshots\\test_intentional_failure_example_2025-11-10_10-29-50.png\n2025-11-10 10:29:50 [INFO] Closing browser session...\n\n---------------------------- Captured log teardown -----------------------------\nINFO     TestLogger:conftest.py:31 Closing browser session...&#34;}], &#34;tests/test_file_upload.py::test_file_upload&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/test_file_upload.py::test_file_upload&#34;, &#34;duration&#34;: &#34;00:00:05&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/test_file_upload.py::test_file_upload&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:05&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stderr setup -----------------------------\n2025-11-10 10:29:52 [INFO] Starting browser session...\n\n------------------------------ Captured log setup ------------------------------\nINFO     TestLogger:conftest.py:26 Starting browser session...\n\n----------------------------- Captured stderr call -----------------------------\n2025-11-10 10:29:54 [INFO] STARTING Test --- File Upload ---\n2025-11-10 10:29:55 [INFO] Navigated to https://the-internet.herokuapp.com/upload\n2025-11-10 10:29:55 [INFO] Temporary file created at: Z:\\1 Learning Selenium\\python_basics\\sample_upload.txt\n2025-11-10 10:29:55 [INFO] File path sent to file input field\n2025-11-10 10:29:55 [INFO] Clicked Upload button\n2025-11-10 10:29:56 [INFO] Upload confirmation header: &amp;#x27;File Uploaded!&amp;#x27;\n2025-11-10 10:29:56 [INFO] Uploaded file name: &amp;#x27;sample_upload.txt&amp;#x27;\n2025-11-10 10:29:56 [INFO] Temporary file deleted\n2025-11-10 10:29:56 [INFO] ENDING Test --- Completed successfully: File Upload ---\n\n------------------------------ Captured log call -------------------------------\nINFO     test_file_upload:test_file_upload.py:8 STARTING Test --- File Upload ---\nINFO     test_file_upload:test_file_upload.py:12 Navigated to https://the-internet.herokuapp.com/upload\nINFO     test_file_upload:test_file_upload.py:19 Temporary file created at: Z:\\1 Learning Selenium\\python_basics\\sample_upload.txt\nINFO     test_file_upload:test_file_upload.py:24 File path sent to file input field\nINFO     test_file_upload:test_file_upload.py:29 Clicked Upload button\nINFO     test_file_upload:test_file_upload.py:33 Upload confirmation header: &amp;#x27;File Uploaded!&amp;#x27;\nINFO     test_file_upload:test_file_upload.py:37 Uploaded file name: &amp;#x27;sample_upload.txt&amp;#x27;\nINFO     test_file_upload:test_file_upload.py:42 Temporary file deleted\nINFO     test_file_upload:test_file_upload.py:43 ENDING Test --- Completed successfully: File Upload ---\n\n--------------------------- Captured stderr teardown ---------------------------\n2025-11-10 10:29:56 [INFO] Closing browser session...\n\n---------------------------- Captured log teardown -----------------------------\nINFO     TestLogger:conftest.py:31 Closing browser session...&#34;}], &#34;tests/test_form_auth.py::test_form_authentication_valid_and_invalid&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/test_form_auth.py::test_form_authentication_valid_and_invalid&#34;, &#34;duration&#34;: &#34;00:00:12&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/test_form_auth.py::test_form_authentication_valid_and_invalid&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:12&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stderr setup -----------------------------\n2025-11-10 10:29:58 [INFO] Starting browser session...\n\n------------------------------ Captured log setup ------------------------------\nINFO     TestLogger:conftest.py:26 Starting browser session...\n\n----------------------------- Captured stderr call -----------------------------\n2025-11-10 10:29:59 [INFO] STARTING Test --- Form Authentication ---\n2025-11-10 10:30:07 [INFO] Navigated to https://the-internet.herokuapp.com/login\n2025-11-10 10:30:07 [INFO] Attempting invalid login...\n2025-11-10 10:30:07 [INFO] Invalid login message: Your username is invalid!\n\u00d7\n2025-11-10 10:30:07 [INFO] Attempting valid login...\n2025-11-10 10:30:08 [INFO] Waiting for success message to appear...\n2025-11-10 10:30:08 [INFO] Valid login message: You logged into a secure area!\n\u00d7\n2025-11-10 10:30:08 [INFO] ENDING Test --- Completed successfully: Form Authentication ---\n\n------------------------------ Captured log call -------------------------------\nINFO     test_form_auth:test_form_auth.py:9 STARTING Test --- Form Authentication ---\nINFO     test_form_auth:test_form_auth.py:13 Navigated to https://the-internet.herokuapp.com/login\nINFO     test_form_auth:test_form_auth.py:16 Attempting invalid login...\nINFO     test_form_auth:test_form_auth.py:22 Invalid login message: Your username is invalid!\n\u00d7\nINFO     test_form_auth:test_form_auth.py:26 Attempting valid login...\nINFO     test_form_auth:test_form_auth.py:33 Waiting for success message to appear...\nINFO     test_form_auth:test_form_auth.py:36 Valid login message: You logged into a secure area!\n\u00d7\nINFO     test_form_auth:test_form_auth.py:39 ENDING Test --- Completed successfully: Form Authentication ---\n\n--------------------------- Captured stderr teardown ---------------------------\n2025-11-10 10:30:08 [INFO] Closing browser session...\n\n---------------------------- Captured log teardown -----------------------------\nINFO     TestLogger:conftest.py:31 Closing browser session...&#34;}], &#34;tests/test_frames.py::test_switch_to_iframe_and_back&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/test_frames.py::test_switch_to_iframe_and_back&#34;, &#34;duration&#34;: &#34;00:00:04&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/test_frames.py::test_switch_to_iframe_and_back&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:04&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stderr setup -----------------------------\n2025-11-10 10:30:10 [INFO] Starting browser session...\n\n------------------------------ Captured log setup ------------------------------\nINFO     TestLogger:conftest.py:26 Starting browser session...\n\n----------------------------- Captured stderr call -----------------------------\n2025-11-10 10:30:11 [INFO] STARTING Test --- Frame Switching ---\n2025-11-10 10:30:12 [INFO] Navigated to https://www.w3schools.com/html/tryit.asp?filename=tryhtml_iframe_height_width\n2025-11-10 10:30:12 [INFO] Switching to outer frame: &amp;#x27;iframeResult&amp;#x27;\n2025-11-10 10:30:12 [INFO] Locating nested iframe element inside outer frame\n2025-11-10 10:30:12 [INFO] Switched into nested iframe\n2025-11-10 10:30:12 [INFO] Header text inside nested iframe: &amp;#x27;This page is displayed in an iframe&amp;#x27;\n2025-11-10 10:30:12 [INFO] Returned to outer frame (iframeResult)\n2025-11-10 10:30:12 [INFO] Returned to main page context\n2025-11-10 10:30:12 [INFO] ENDING Test --- Completed successfully: Frame Switching ---\n\n------------------------------ Captured log call -------------------------------\nINFO     test_frames:test_frames.py:7 STARTING Test --- Frame Switching ---\nINFO     test_frames:test_frames.py:11 Navigated to https://www.w3schools.com/html/tryit.asp?filename=tryhtml_iframe_height_width\nINFO     test_frames:test_frames.py:14 Switching to outer frame: &amp;#x27;iframeResult&amp;#x27;\nINFO     test_frames:test_frames.py:18 Locating nested iframe element inside outer frame\nINFO     test_frames:test_frames.py:21 Switched into nested iframe\nINFO     test_frames:test_frames.py:25 Header text inside nested iframe: &amp;#x27;This page is displayed in an iframe&amp;#x27;\nINFO     test_frames:test_frames.py:30 Returned to outer frame (iframeResult)\nINFO     test_frames:test_frames.py:34 Returned to main page context\nINFO     test_frames:test_frames.py:36 ENDING Test --- Completed successfully: Frame Switching ---\n\n--------------------------- Captured stderr teardown ---------------------------\n2025-11-10 10:30:12 [INFO] Closing browser session...\n\n---------------------------- Captured log teardown -----------------------------\nINFO     TestLogger:conftest.py:31 Closing browser session...&#34;}], &#34;tests/test_navigation.py::test_navigation_and_title&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/test_navigation.py::test_navigation_and_title&#34;, &#34;duration&#34;: &#34;00:00:05&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/test_navigation.py::test_navigation_and_title&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:05&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stderr setup -----------------------------\n2025-11-10 10:30:14 [INFO] Starting browser session...\n\n------------------------------ Captured log setup ------------------------------\nINFO     TestLogger:conftest.py:26 Starting browser session...\n\n----------------------------- Captured stderr call -----------------------------\n2025-11-10 10:30:15 [INFO] STARTING Test --- Navigation &amp;amp; Page Title Validation ---\n2025-11-10 10:30:15 [INFO] Navigating to https://the-internet.herokuapp.com/\n2025-11-10 10:30:17 [INFO] Locating &amp;#x27;Form Authentication&amp;#x27; link\n2025-11-10 10:30:17 [INFO] Clicking &amp;#x27;Form Authentication&amp;#x27; link\n2025-11-10 10:30:17 [INFO] Validating that header text equals &amp;#x27;Login Page&amp;#x27;\n2025-11-10 10:30:17 [INFO] Current URL after navigation: https://the-internet.herokuapp.com/login\n2025-11-10 10:30:17 [INFO] ENDING TEST --- Completed successfully: Navigation &amp;amp; Page Title Validation ---\n\n------------------------------ Captured log call -------------------------------\nINFO     test_navigation:test_navigation.py:7 STARTING Test --- Navigation &amp;amp; Page Title Validation ---\nINFO     test_navigation:test_navigation.py:11 Navigating to https://the-internet.herokuapp.com/\nINFO     test_navigation:test_navigation.py:15 Locating &amp;#x27;Form Authentication&amp;#x27; link\nINFO     test_navigation:test_navigation.py:17 Clicking &amp;#x27;Form Authentication&amp;#x27; link\nINFO     test_navigation:test_navigation.py:21 Validating that header text equals &amp;#x27;Login Page&amp;#x27;\nINFO     test_navigation:test_navigation.py:27 Current URL after navigation: https://the-internet.herokuapp.com/login\nINFO     test_navigation:test_navigation.py:30 ENDING TEST --- Completed successfully: Navigation &amp;amp; Page Title Validation ---\n\n--------------------------- Captured stderr teardown ---------------------------\n2025-11-10 10:30:17 [INFO] Closing browser session...\n\n---------------------------- Captured log teardown -----------------------------\nINFO     TestLogger:conftest.py:31 Closing browser session...&#34;}]}, &#34;renderCollapsed&#34;: [&#34;passed&#34;], &#34;initialSort&#34;: &#34;result&#34;, &#34;title&#34;: &#34;latest_report.html&#34;}"></div>
+    <script>
+      (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+const { getCollapsedCategory, setCollapsedIds } = require('./storage.js')
+
+class DataManager {
+    setManager(data) {
+        const collapsedCategories = [...getCollapsedCategory(data.renderCollapsed)]
+        const collapsedIds = []
+        const tests = Object.values(data.tests).flat().map((test, index) => {
+            const collapsed = collapsedCategories.includes(test.result.toLowerCase())
+            const id = `test_${index}`
+            if (collapsed) {
+                collapsedIds.push(id)
+            }
+            return {
+                ...test,
+                id,
+                collapsed,
+            }
+        })
+        const dataBlob = { ...data, tests }
+        this.data = { ...dataBlob }
+        this.renderData = { ...dataBlob }
+        setCollapsedIds(collapsedIds)
+    }
+
+    get allData() {
+        return { ...this.data }
+    }
+
+    resetRender() {
+        this.renderData = { ...this.data }
+    }
+
+    setRender(data) {
+        this.renderData.tests = [...data]
+    }
+
+    toggleCollapsedItem(id) {
+        this.renderData.tests = this.renderData.tests.map((test) =>
+            test.id === id ? { ...test, collapsed: !test.collapsed } : test,
+        )
+    }
+
+    set allCollapsed(collapsed) {
+        this.renderData = { ...this.renderData, tests: [...this.renderData.tests.map((test) => (
+            { ...test, collapsed }
+        ))] }
+    }
+
+    get testSubset() {
+        return [...this.renderData.tests]
+    }
+
+    get environment() {
+        return this.renderData.environment
+    }
+
+    get initialSort() {
+        return this.data.initialSort
+    }
+}
+
+module.exports = {
+    manager: new DataManager(),
+}
+
+},{"./storage.js":8}],2:[function(require,module,exports){
+const mediaViewer = require('./mediaviewer.js')
+const templateEnvRow = document.getElementById('template_environment_row')
+const templateResult = document.getElementById('template_results-table__tbody')
+
+function htmlToElements(html) {
+    const temp = document.createElement('template')
+    temp.innerHTML = html
+    return temp.content.childNodes
+}
+
+const find = (selector, elem) => {
+    if (!elem) {
+        elem = document
+    }
+    return elem.querySelector(selector)
+}
+
+const findAll = (selector, elem) => {
+    if (!elem) {
+        elem = document
+    }
+    return [...elem.querySelectorAll(selector)]
+}
+
+const dom = {
+    getStaticRow: (key, value) => {
+        const envRow = templateEnvRow.content.cloneNode(true)
+        const isObj = typeof value === 'object' && value !== null
+        const values = isObj ? Object.keys(value).map((k) => `${k}: ${value[k]}`) : null
+
+        const valuesElement = htmlToElements(
+            values ? `<ul>${values.map((val) => `<li>${val}</li>`).join('')}<ul>` : `<div>${value}</div>`)[0]
+        const td = findAll('td', envRow)
+        td[0].textContent = key
+        td[1].appendChild(valuesElement)
+
+        return envRow
+    },
+    getResultTBody: ({ testId, id, log, extras, resultsTableRow, tableHtml, result, collapsed }) => {
+        const resultBody = templateResult.content.cloneNode(true)
+        resultBody.querySelector('tbody').classList.add(result.toLowerCase())
+        resultBody.querySelector('tbody').id = testId
+        resultBody.querySelector('.collapsible').dataset.id = id
+
+        resultsTableRow.forEach((html) => {
+            const t = document.createElement('template')
+            t.innerHTML = html
+            resultBody.querySelector('.collapsible').appendChild(t.content)
+        })
+
+        if (log) {
+            // Wrap lines starting with "E" with span.error to color those lines red
+            const wrappedLog = log.replace(/^E.*$/gm, (match) => `<span class="error">${match}</span>`)
+            resultBody.querySelector('.log').innerHTML = wrappedLog
+        } else {
+            resultBody.querySelector('.log').remove()
+        }
+
+        if (collapsed) {
+            resultBody.querySelector('.collapsible > td')?.classList.add('collapsed')
+            resultBody.querySelector('.extras-row').classList.add('hidden')
+        } else {
+            resultBody.querySelector('.collapsible > td')?.classList.remove('collapsed')
+        }
+
+        const media = []
+        extras?.forEach(({ name, format_type, content }) => {
+            if (['image', 'video'].includes(format_type)) {
+                media.push({ path: content, name, format_type })
+            }
+
+            if (format_type === 'html') {
+                resultBody.querySelector('.extraHTML').insertAdjacentHTML('beforeend', `<div>${content}</div>`)
+            }
+        })
+        mediaViewer.setup(resultBody, media)
+
+        // Add custom html from the pytest_html_results_table_html hook
+        tableHtml?.forEach((item) => {
+            resultBody.querySelector('td[class="extra"]').insertAdjacentHTML('beforeend', item)
+        })
+
+        return resultBody
+    },
+}
+
+module.exports = {
+    dom,
+    htmlToElements,
+    find,
+    findAll,
+}
+
+},{"./mediaviewer.js":6}],3:[function(require,module,exports){
+const { manager } = require('./datamanager.js')
+const { doSort } = require('./sort.js')
+const storageModule = require('./storage.js')
+
+const getFilteredSubSet = (filter) =>
+    manager.allData.tests.filter(({ result }) => filter.includes(result.toLowerCase()))
+
+const doInitFilter = () => {
+    const currentFilter = storageModule.getVisible()
+    const filteredSubset = getFilteredSubSet(currentFilter)
+    manager.setRender(filteredSubset)
+}
+
+const doFilter = (type, show) => {
+    if (show) {
+        storageModule.showCategory(type)
+    } else {
+        storageModule.hideCategory(type)
+    }
+
+    const currentFilter = storageModule.getVisible()
+    const filteredSubset = getFilteredSubSet(currentFilter)
+    manager.setRender(filteredSubset)
+
+    const sortColumn = storageModule.getSort()
+    doSort(sortColumn, true)
+}
+
+module.exports = {
+    doFilter,
+    doInitFilter,
+}
+
+},{"./datamanager.js":1,"./sort.js":7,"./storage.js":8}],4:[function(require,module,exports){
+const { redraw, bindEvents, renderStatic } = require('./main.js')
+const { doInitFilter } = require('./filter.js')
+const { doInitSort } = require('./sort.js')
+const { manager } = require('./datamanager.js')
+const data = JSON.parse(document.getElementById('data-container').dataset.jsonblob)
+
+function init() {
+    manager.setManager(data)
+    doInitFilter()
+    doInitSort()
+    renderStatic()
+    redraw()
+    bindEvents()
+}
+
+init()
+
+},{"./datamanager.js":1,"./filter.js":3,"./main.js":5,"./sort.js":7}],5:[function(require,module,exports){
+const { dom, find, findAll } = require('./dom.js')
+const { manager } = require('./datamanager.js')
+const { doSort } = require('./sort.js')
+const { doFilter } = require('./filter.js')
+const {
+    getVisible,
+    getCollapsedIds,
+    setCollapsedIds,
+    getSort,
+    getSortDirection,
+    possibleFilters,
+} = require('./storage.js')
+
+const removeChildren = (node) => {
+    while (node.firstChild) {
+        node.removeChild(node.firstChild)
+    }
+}
+
+const renderStatic = () => {
+    const renderEnvironmentTable = () => {
+        const environment = manager.environment
+        const rows = Object.keys(environment).map((key) => dom.getStaticRow(key, environment[key]))
+        const table = document.getElementById('environment')
+        removeChildren(table)
+        rows.forEach((row) => table.appendChild(row))
+    }
+    renderEnvironmentTable()
+}
+
+const addItemToggleListener = (elem) => {
+    elem.addEventListener('click', ({ target }) => {
+        const id = target.parentElement.dataset.id
+        manager.toggleCollapsedItem(id)
+
+        const collapsedIds = getCollapsedIds()
+        if (collapsedIds.includes(id)) {
+            const updated = collapsedIds.filter((item) => item !== id)
+            setCollapsedIds(updated)
+        } else {
+            collapsedIds.push(id)
+            setCollapsedIds(collapsedIds)
+        }
+        redraw()
+    })
+}
+
+const renderContent = (tests) => {
+    const sortAttr = getSort(manager.initialSort)
+    const sortAsc = JSON.parse(getSortDirection())
+    const rows = tests.map(dom.getResultTBody)
+    const table = document.getElementById('results-table')
+    const tableHeader = document.getElementById('results-table-head')
+
+    const newTable = document.createElement('table')
+    newTable.id = 'results-table'
+
+    // remove all sorting classes and set the relevant
+    findAll('.sortable', tableHeader).forEach((elem) => elem.classList.remove('asc', 'desc'))
+    tableHeader.querySelector(`.sortable[data-column-type="${sortAttr}"]`)?.classList.add(sortAsc ? 'desc' : 'asc')
+    newTable.appendChild(tableHeader)
+
+    if (!rows.length) {
+        const emptyTable = document.getElementById('template_results-table__body--empty').content.cloneNode(true)
+        newTable.appendChild(emptyTable)
+    } else {
+        rows.forEach((row) => {
+            if (!!row) {
+                findAll('.collapsible td:not(.col-links', row).forEach(addItemToggleListener)
+                find('.logexpander', row).addEventListener('click',
+                    (evt) => evt.target.parentNode.classList.toggle('expanded'),
+                )
+                newTable.appendChild(row)
+            }
+        })
+    }
+
+    table.replaceWith(newTable)
+}
+
+const renderDerived = () => {
+    const currentFilter = getVisible()
+    possibleFilters.forEach((result) => {
+        const input = document.querySelector(`input[data-test-result="${result}"]`)
+        input.checked = currentFilter.includes(result)
+    })
+}
+
+const bindEvents = () => {
+    const filterColumn = (evt) => {
+        const { target: element } = evt
+        const { testResult } = element.dataset
+
+        doFilter(testResult, element.checked)
+        const collapsedIds = getCollapsedIds()
+        const updated = manager.renderData.tests.map((test) => {
+            return {
+                ...test,
+                collapsed: collapsedIds.includes(test.id),
+            }
+        })
+        manager.setRender(updated)
+        redraw()
+    }
+
+    const header = document.getElementById('environment-header')
+    header.addEventListener('click', () => {
+        const table = document.getElementById('environment')
+        table.classList.toggle('hidden')
+        header.classList.toggle('collapsed')
+    })
+
+    findAll('input[name="filter_checkbox"]').forEach((elem) => {
+        elem.addEventListener('click', filterColumn)
+    })
+
+    findAll('.sortable').forEach((elem) => {
+        elem.addEventListener('click', (evt) => {
+            const { target: element } = evt
+            const { columnType } = element.dataset
+            doSort(columnType)
+            redraw()
+        })
+    })
+
+    document.getElementById('show_all_details').addEventListener('click', () => {
+        manager.allCollapsed = false
+        setCollapsedIds([])
+        redraw()
+    })
+    document.getElementById('hide_all_details').addEventListener('click', () => {
+        manager.allCollapsed = true
+        const allIds = manager.renderData.tests.map((test) => test.id)
+        setCollapsedIds(allIds)
+        redraw()
+    })
+}
+
+const redraw = () => {
+    const { testSubset } = manager
+
+    renderContent(testSubset)
+    renderDerived()
+}
+
+module.exports = {
+    redraw,
+    bindEvents,
+    renderStatic,
+}
+
+},{"./datamanager.js":1,"./dom.js":2,"./filter.js":3,"./sort.js":7,"./storage.js":8}],6:[function(require,module,exports){
+class MediaViewer {
+    constructor(assets) {
+        this.assets = assets
+        this.index = 0
+    }
+
+    nextActive() {
+        this.index = this.index === this.assets.length - 1 ? 0 : this.index + 1
+        return [this.activeFile, this.index]
+    }
+
+    prevActive() {
+        this.index = this.index === 0 ? this.assets.length - 1 : this.index -1
+        return [this.activeFile, this.index]
+    }
+
+    get currentIndex() {
+        return this.index
+    }
+
+    get activeFile() {
+        return this.assets[this.index]
+    }
+}
+
+
+const setup = (resultBody, assets) => {
+    if (!assets.length) {
+        resultBody.querySelector('.media').classList.add('hidden')
+        return
+    }
+
+    const mediaViewer = new MediaViewer(assets)
+    const container = resultBody.querySelector('.media-container')
+    const leftArrow = resultBody.querySelector('.media-container__nav--left')
+    const rightArrow = resultBody.querySelector('.media-container__nav--right')
+    const mediaName = resultBody.querySelector('.media__name')
+    const counter = resultBody.querySelector('.media__counter')
+    const imageEl = resultBody.querySelector('img')
+    const sourceEl = resultBody.querySelector('source')
+    const videoEl = resultBody.querySelector('video')
+
+    const setImg = (media, index) => {
+        if (media?.format_type === 'image') {
+            imageEl.src = media.path
+
+            imageEl.classList.remove('hidden')
+            videoEl.classList.add('hidden')
+        } else if (media?.format_type === 'video') {
+            sourceEl.src = media.path
+
+            videoEl.classList.remove('hidden')
+            imageEl.classList.add('hidden')
+        }
+
+        mediaName.innerText = media?.name
+        counter.innerText = `${index + 1} / ${assets.length}`
+    }
+    setImg(mediaViewer.activeFile, mediaViewer.currentIndex)
+
+    const moveLeft = () => {
+        const [media, index] = mediaViewer.prevActive()
+        setImg(media, index)
+    }
+    const doRight = () => {
+        const [media, index] = mediaViewer.nextActive()
+        setImg(media, index)
+    }
+    const openImg = () => {
+        window.open(mediaViewer.activeFile.path, '_blank')
+    }
+    if (assets.length === 1) {
+        container.classList.add('media-container--fullscreen')
+    } else {
+        leftArrow.addEventListener('click', moveLeft)
+        rightArrow.addEventListener('click', doRight)
+    }
+    imageEl.addEventListener('click', openImg)
+}
+
+module.exports = {
+    setup,
+}
+
+},{}],7:[function(require,module,exports){
+const { manager } = require('./datamanager.js')
+const storageModule = require('./storage.js')
+
+const genericSort = (list, key, ascending, customOrder) => {
+    let sorted
+    if (customOrder) {
+        sorted = list.sort((a, b) => {
+            const aValue = a.result.toLowerCase()
+            const bValue = b.result.toLowerCase()
+
+            const aIndex = customOrder.findIndex((item) => item.toLowerCase() === aValue)
+            const bIndex = customOrder.findIndex((item) => item.toLowerCase() === bValue)
+
+            // Compare the indices to determine the sort order
+            return aIndex - bIndex
+        })
+    } else {
+        sorted = list.sort((a, b) => a[key] === b[key] ? 0 : a[key] > b[key] ? 1 : -1)
+    }
+
+    if (ascending) {
+        sorted.reverse()
+    }
+    return sorted
+}
+
+const durationSort = (list, ascending) => {
+    const parseDuration = (duration) => {
+        if (duration.includes(':')) {
+            // If it's in the format "HH:mm:ss"
+            const [hours, minutes, seconds] = duration.split(':').map(Number)
+            return (hours * 3600 + minutes * 60 + seconds) * 1000
+        } else {
+            // If it's in the format "nnn ms"
+            return parseInt(duration)
+        }
+    }
+    const sorted = list.sort((a, b) => parseDuration(a['duration']) - parseDuration(b['duration']))
+    if (ascending) {
+        sorted.reverse()
+    }
+    return sorted
+}
+
+const doInitSort = () => {
+    const type = storageModule.getSort(manager.initialSort)
+    const ascending = storageModule.getSortDirection()
+    const list = manager.testSubset
+    const initialOrder = ['Error', 'Failed', 'Rerun', 'XFailed', 'XPassed', 'Skipped', 'Passed']
+
+    storageModule.setSort(type)
+    storageModule.setSortDirection(ascending)
+
+    if (type?.toLowerCase() === 'original') {
+        manager.setRender(list)
+    } else {
+        let sortedList
+        switch (type) {
+        case 'duration':
+            sortedList = durationSort(list, ascending)
+            break
+        case 'result':
+            sortedList = genericSort(list, type, ascending, initialOrder)
+            break
+        default:
+            sortedList = genericSort(list, type, ascending)
+            break
+        }
+        manager.setRender(sortedList)
+    }
+}
+
+const doSort = (type, skipDirection) => {
+    const newSortType = storageModule.getSort(manager.initialSort) !== type
+    const currentAsc = storageModule.getSortDirection()
+    let ascending
+    if (skipDirection) {
+        ascending = currentAsc
+    } else {
+        ascending = newSortType ? false : !currentAsc
+    }
+    storageModule.setSort(type)
+    storageModule.setSortDirection(ascending)
+
+    const list = manager.testSubset
+    const sortedList = type === 'duration' ? durationSort(list, ascending) : genericSort(list, type, ascending)
+    manager.setRender(sortedList)
+}
+
+module.exports = {
+    doInitSort,
+    doSort,
+}
+
+},{"./datamanager.js":1,"./storage.js":8}],8:[function(require,module,exports){
+const possibleFilters = [
+    'passed',
+    'skipped',
+    'failed',
+    'error',
+    'xfailed',
+    'xpassed',
+    'rerun',
+]
+
+const getVisible = () => {
+    const url = new URL(window.location.href)
+    const settings = new URLSearchParams(url.search).get('visible')
+    const lower = (item) => {
+        const lowerItem = item.toLowerCase()
+        if (possibleFilters.includes(lowerItem)) {
+            return lowerItem
+        }
+        return null
+    }
+    return settings === null ?
+        possibleFilters :
+        [...new Set(settings?.split(',').map(lower).filter((item) => item))]
+}
+
+const hideCategory = (categoryToHide) => {
+    const url = new URL(window.location.href)
+    const visibleParams = new URLSearchParams(url.search).get('visible')
+    const currentVisible = visibleParams ? visibleParams.split(',') : [...possibleFilters]
+    const settings = [...new Set(currentVisible)].filter((f) => f !== categoryToHide).join(',')
+
+    url.searchParams.set('visible', settings)
+    window.history.pushState({}, null, unescape(url.href))
+}
+
+const showCategory = (categoryToShow) => {
+    if (typeof window === 'undefined') {
+        return
+    }
+    const url = new URL(window.location.href)
+    const currentVisible = new URLSearchParams(url.search).get('visible')?.split(',').filter(Boolean) ||
+        [...possibleFilters]
+    const settings = [...new Set([categoryToShow, ...currentVisible])]
+    const noFilter = possibleFilters.length === settings.length || !settings.length
+
+    noFilter ? url.searchParams.delete('visible') : url.searchParams.set('visible', settings.join(','))
+    window.history.pushState({}, null, unescape(url.href))
+}
+
+const getSort = (initialSort) => {
+    const url = new URL(window.location.href)
+    let sort = new URLSearchParams(url.search).get('sort')
+    if (!sort) {
+        sort = initialSort || 'result'
+    }
+    return sort
+}
+
+const setSort = (type) => {
+    const url = new URL(window.location.href)
+    url.searchParams.set('sort', type)
+    window.history.pushState({}, null, unescape(url.href))
+}
+
+const getCollapsedCategory = (renderCollapsed) => {
+    let categories
+    if (typeof window !== 'undefined') {
+        const url = new URL(window.location.href)
+        const collapsedItems = new URLSearchParams(url.search).get('collapsed')
+        switch (true) {
+        case !renderCollapsed && collapsedItems === null:
+            categories = ['passed']
+            break
+        case collapsedItems?.length === 0 || /^["']{2}$/.test(collapsedItems):
+            categories = []
+            break
+        case /^all$/.test(collapsedItems) || collapsedItems === null && /^all$/.test(renderCollapsed):
+            categories = [...possibleFilters]
+            break
+        default:
+            categories = collapsedItems?.split(',').map((item) => item.toLowerCase()) || renderCollapsed
+            break
+        }
+    } else {
+        categories = []
+    }
+    return categories
+}
+
+const getSortDirection = () => JSON.parse(sessionStorage.getItem('sortAsc')) || false
+const setSortDirection = (ascending) => sessionStorage.setItem('sortAsc', ascending)
+
+const getCollapsedIds = () => JSON.parse(sessionStorage.getItem('collapsedIds')) || []
+const setCollapsedIds = (list) => sessionStorage.setItem('collapsedIds', JSON.stringify(list))
+
+module.exports = {
+    getVisible,
+    hideCategory,
+    showCategory,
+    getCollapsedIds,
+    setCollapsedIds,
+    getSort,
+    setSort,
+    getSortDirection,
+    setSortDirection,
+    getCollapsedCategory,
+    possibleFilters,
+}
+
+},{}]},{},[4]);
+    </script>
+  </footer>
+</html>

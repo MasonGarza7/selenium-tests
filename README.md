@@ -7,6 +7,11 @@ It includes common, practical examples of alerts, checkboxes, dropdowns, dynamic
 This project will contain sub-projects, one of each of the main Selenium supported programming languages. Currently, only the Python sub-project is complete.  
 Each sub-project's framework will be independent, built with its own reporting system, logging, and screenshot capture on test failure.
 
+Note:
+This framework is built using Selenium WebDriver, the core automation library that provides direct control over web browsers.  
+It does not use Selenium IDE (record/playback tool) or Selenium Grid (distributed execution system).  
+All interactions, assertions, and reporting are handled through custom scripts using the WebDriver API.  
+
 --- 
 
 ## Getting Started
@@ -17,6 +22,7 @@ cd selenium-tests
 ```
 
 ### Install Python dependencies:
+0. CD the `python_basics/` subproject folder
 1. Create and activate a virtual environment by running: 
 ```bash
 python -m venv .venv
@@ -32,51 +38,102 @@ deactivate
 rmdir /s /q .venv
 ```
 
-## Running tests (Python)
+### Install JavaScript dependencies: 
+0. CD the `javascript_basics/` subfolder 
+1. This project requires Node and NPM. Verify you have them installed by running:  
+(NOTE: I'm using Node v24.11.0 and NPM 11.6.1)
+```bash
+node -v
+npm -v
+```
+2. Install the dependencies by running:  
+(NOTE: this installs selenium-webdriver, mocha/mochaawesome, winston, fs-extra, cross-env, etc.)
+```bash
+npm install
+```
+3.  Have Google Chrome installed 
+
+
+## Running tests
 
 ### Running all tests:
 #### Python (CD the `python_basics/` folder)
 ```bash
 pytest
 ```
-
-### Running a single folder or script containing multiple tests:
-#### Python (CD the `python_basics/` folder)
+#### JavaScript (CD the `javascript_basics/` folder)
 ```bash
-pytest tests/
+npm test
 ```
 
-### Running a single test:
-#### Python (CD the project root)
+### Running a single test script:
+#### Python (CD the `python_basics/` folder)
 ```bash
 pytest tests/test_navigation.py
+```
+#### JavaScript (CD the `javascript_basics/` folder)
+```bash
+npm run test:file -- src/tests/navigation.test.js
+```
+
+### Running all JavaScript tests headless:
+#### JavaScript (CD the `javascript_basics/` folder)
+```bash
+npm run test:headless
+```
+
+### Running all JavaScript tests in FAST headless (CI-optimized):
+#### JavaScript (CD the `javascript_basics/` folder)
+```bash
+npm run test:fast
 ```
 
 ## File Structure:
 ```bash
 .
-.
-├── python_basics/                        # Python sub-project
+├── python_basics/                        # Python subproject
 │   ├── .venv/                            # Virtual environment (Python dependencies)
 │   ├── .pytest_cache/                    # Pytest's temporary cache for previous test runs
 │   ├── __pycache__/                      # Compiled Python bytecode files
 │   ├── results/                          # Stores Python test run output artifacts
-│   │   ├── logs/                         # Timestamped test run logs
-│   │   ├── screenshots/                  # Screenshots captured on test failures
+│   │   ├── logs/                         # Timestamped Python test run logs
+│   │   ├── screenshots/                  # Screenshots captured on Python test run failures
 │   │   └── latest_report.html            # Pytest HTML report (auto-generated each run)
 │   ├── tests/                            # Python Selenium test scripts
 │   ├── utils/                            # Utility scripts shared across tests
 │   │   ├── logger.py                     # Custom logging handler for all test runs
 │   │   ├── report_manager.py             # Configures and manages pytest HTML reporting
-│   │   └── screenshot_helper.py          # Captures screenshots on test failures
+│   │   └── screenshot_helper.py          # Captures screenshots on Python test failures
 │   ├── conftest.py                       # Pytest fixture setup (browser, teardown, global hooks)
 │   ├── pytest.ini                        # Pytest configuration (logging, report setup)
 │   └── requirements.txt                  # Project dependencies for pip installation
+│
+├── javascript_basics/                    # JavaScript subproject
+│   ├── node_modules/                     # Installed Node.js dependencies for the JS subproject
+│   ├── results/                          # Stores JavaScript test run output artifacts
+│   │   ├── logs/                         # Timestamped JavaScript test run logs
+│   │   ├── report/                       # Mochaawesome HTML report (auto-generated each run)
+│   │   └── screenshots/                  # Screenshots captured on JavaScript test run failures 
+│   ├── src/                              # Source code for JS tests and supporting utilities
+│   │   ├── tests/                        # JavaScript Selenium test scripts 
+│   │   ├── utils/                        # Utility scripts shared across tests 
+│   │   │   ├── logger.js                 # Custom Winston/fs-extra logging handler for all test runs
+│   │   │   ├── screenshot.js             # Captures screenshtos on JavaScript test failures 
+│   │   │   ├── select.js                 # Helper for selecting dropdown options and handling <select> elements
+│   │   │   └── sleep.js                  # Simple utility for adding manual await-based delay between steps
+│   │   ├── globalSetup.js                # Builds a fresh driver instance per test and manages headless mode
+│   │   └── testSetup.js                  # Global Mocha hooks: start driver, teardown driver, screenshots, logging 
+│   ├── temp/                             # Temporary files used by tests (e.g., file-upload temp files)
+│   ├── package.json                      # Project manifest defining scripts, dependencies, and test commands
+│   └── package-lock.json                 # Lockfile ensuring repeatable installs for all Node.js dependencies
+│
+├── .gitignore                            # Files and directories exluded from version control 
 ├── README.md                             # Project overview, setup, instructions, and documentation
 ```
 
 ## Test Cases
 | Tests | Purpose |
+|-|-|
 |Navigation|navigate and title validations|
 |Form Authentication|success/failure with valid/invalid credentials|
 |Checkboxes|toggling checkboxes on/off|
@@ -90,13 +147,18 @@ pytest tests/test_navigation.py
 ## Logging and Reporting Results:
 - All Python tests have logs available in the console, the log file, and generate the report `python_basics/results/latest_report.html`
     - Drag and drop the HTML into your browser and you will see the standard pytest report.
-    - Logs are written both in the console and to the `python_basics/logs/DATE_TIME.log` file
+    - Logs are written in both the console and to the `python_basics/logs/DATE_TIME.log` file.
+- All JavaScript tests have logs available in the console, the log file, and generate the report `javascript_basics/results/report/mochawesome.html`
+    - Drag and drop the HTML into your browswer and you will see the standard MochaAwesome report. 
+    - Logs are written in both the console and to the `javascript_basics/results/logs/test_run_DATE_TIME.log` file. 
 
 
 ## Screenshot on Failure:
 - When a Python test fails, a screenshot is automatically captured via a Pytest hook (conftest.py).
-    - Screenshots are stored in the `python_basics/results/screenshots/` folder with timestamped file names. 
+    - Screenshots are stored in the `python_basics/results/screenshots/` folder with labled, timestamped file names. 
+- When a JavaScript test fails, Mocha automatically triggers a hook `testSetup.js` that captures a screenshot using `screenshot.js`.
+    - Screenshots are stored in the `javascript_basics/results/screenshots/` folder with labled, timestamped file names. 
 
 
 ## Next Steps:
-- Begin the JavaScript/TypeScript sub-project
+- Begin the .NET/MSTest subproject
