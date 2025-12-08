@@ -4,7 +4,7 @@
 This project demonstrates my proficiency with [Selenium](https://www.selenium.dev/) for web application automation testing.  
 It includes common, practical examples of alerts, checkboxes, dropdowns, dynamic controls, file uploads, form authentication, frames, navigation, and failure handling.  
 
-This project will contain sub-projects, one of each of the main Selenium supported programming languages. Currently, only the Python sub-project is complete.  
+This project will contain sub-projects, one of each of the main Selenium supported programming languages. Currently, only the Python, JavaScript, and C# sub-projects are complete.  
 Each sub-project's framework will be independent, built with its own reporting system, logging, and screenshot capture on test failure.
 
 Note:
@@ -53,6 +53,13 @@ npm install
 ```
 3.  Have Google Chrome installed 
 
+### Install C# dependencies:
+0. CD the `csharp_basics/` subfolder 
+1. Restore NuGet packages by running:
+```bash
+dotnet restore
+```
+
 
 ## Running tests
 
@@ -65,6 +72,10 @@ pytest
 ```bash
 npm test
 ```
+#### C# (CD the `csharp_basics/` folder)
+```bash
+.\run_tests.ps1
+```
 
 ### Running a single test script:
 #### Python (CD the `python_basics/` folder)
@@ -74,6 +85,10 @@ pytest tests/test_navigation.py
 #### JavaScript (CD the `javascript_basics/` folder)
 ```bash
 npm run test:file -- src/tests/navigation.test.js
+```
+#### C# (CD the `csharp_basics/` folder)
+```bash
+dotnet test --filter "FullyQualifiedName~NavigationTest"
 ```
 
 ### Running all JavaScript tests headless:
@@ -118,7 +133,7 @@ npm run test:fast
 │   │   ├── tests/                        # JavaScript Selenium test scripts 
 │   │   ├── utils/                        # Utility scripts shared across tests 
 │   │   │   ├── logger.js                 # Custom Winston/fs-extra logging handler for all test runs
-│   │   │   ├── screenshot.js             # Captures screenshtos on JavaScript test failures 
+│   │   │   ├── screenshot.js             # Captures screenshots on JavaScript test failures 
 │   │   │   ├── select.js                 # Helper for selecting dropdown options and handling <select> elements
 │   │   │   └── sleep.js                  # Simple utility for adding manual await-based delay between steps
 │   │   ├── globalSetup.js                # Builds a fresh driver instance per test and manages headless mode
@@ -127,7 +142,23 @@ npm run test:fast
 │   ├── package.json                      # Project manifest defining scripts, dependencies, and test commands
 │   └── package-lock.json                 # Lockfile ensuring repeatable installs for all Node.js dependencies
 │
-├── .gitignore                            # Files and directories exluded from version control 
+├── csharp_basics/                        # C# subproject
+│   ├── bin/                              # Compiled output when project is built or tested 
+│   ├── obj/                              # Stores intermediate build artifacts used by .NET during compilation 
+│   ├── results/                          # Stores C# test run output artifacts
+│   │   ├── logs/                         # Timestamped C# test run logs
+│   │   └── screenshots/                  # Screenshots captured on C# test run failures
+│   ├── temp/                             # Temporary files used by tests (e.g., file-upload temp files)
+│   ├── tests/                            # C# Selenium test scripts
+│   │   └── BaseTest.cs                   # The core test harness that all tests inherit from 
+│   ├── utils/                            # Utility scripts shared across tests
+│   │   ├── logger.cs                     # Custom logging handler for all test runs 
+│   │   └── ScreenshotHelper.cs           # Utility class responsible for capturing screenshots on test failures 
+│   ├── allureConfig.json                 # Allure reporting configuration file. Defines where raw Allure test result files are written
+│   ├── csharp_basics.csproj              # C# project definition file. Declares dependencies, build settings, output behaviors, etc. 
+│   └── run_tests.ps1                     # PowerShell automation script for executing all tests and generating reports 
+│
+├── .gitignore                            # Files and directories excluded from version control 
 ├── README.md                             # Project overview, setup, instructions, and documentation
 ```
 
@@ -149,16 +180,23 @@ npm run test:fast
     - Drag and drop the HTML into your browser and you will see the standard pytest report.
     - Logs are written in both the console and to the `python_basics/logs/DATE_TIME.log` file.
 - All JavaScript tests have logs available in the console, the log file, and generate the report `javascript_basics/results/report/mochawesome.html`
-    - Drag and drop the HTML into your browswer and you will see the standard MochaAwesome report. 
+    - Drag and drop the HTML into your browser and you will see the standard MochaAwesome report. 
     - Logs are written in both the console and to the `javascript_basics/results/logs/test_run_DATE_TIME.log` file. 
+- All C# tests have logs written. Allure reports are only generated when using the `run_tests.ps1` script. 
+    - Logs are available in the `csharp_basics/results/logs/` file.
+    - When using the `run_tests.ps1` script, reports are generated and opened automatically in a chrome browser. 
+        - This is because Allure reports generated with `allure generate` are static files that cannot be dragged into web browsers like the other sub-projects as they pose a security risk.
+        - To combat this, I used `allure serve` in the PowerShell script to host a local webserver and open the dynamic report automatically, revealing a standard Allure report. 
 
 
 ## Screenshot on Failure:
 - When a Python test fails, a screenshot is automatically captured via a Pytest hook (conftest.py).
-    - Screenshots are stored in the `python_basics/results/screenshots/` folder with labled, timestamped file names. 
+    - Screenshots are stored in the `python_basics/results/screenshots/` folder with labeled, timestamped file names. 
 - When a JavaScript test fails, Mocha automatically triggers a hook `testSetup.js` that captures a screenshot using `screenshot.js`.
-    - Screenshots are stored in the `javascript_basics/results/screenshots/` folder with labled, timestamped file names. 
+    - Screenshots are stored in the `javascript_basics/results/screenshots/` folder with labeled, timestamped file names. 
+- When a C# test fails, a screenshot is automatically captured via my own automation layer (BaseTest + ScreenshotHelper).
+    - Screenshots are stored in the `csharp_basics/results/screenshots/` folder with labeled, timestamped file names. 
 
 
 ## Next Steps:
-- Begin the .NET/MSTest subproject
+- Begin the Ruby subproject
