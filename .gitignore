@@ -60,6 +60,18 @@ csharp_basics/temp/
 
 
 ############################################
+# RUBY
+############################################
+# Bundler
+.bundle/
+vendor/bundle/
+
+# Ruby test artifacts
+ruby_basics/results/
+ruby_basics/temp/
+
+
+############################################
 # SHARED TEMP FILES
 ############################################
 temp/

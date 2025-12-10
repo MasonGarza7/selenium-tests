@@ -4,7 +4,7 @@
 This project demonstrates my proficiency with [Selenium](https://www.selenium.dev/) for web application automation testing.  
 It includes common, practical examples of alerts, checkboxes, dropdowns, dynamic controls, file uploads, form authentication, frames, navigation, and failure handling.  
 
-This project will contain sub-projects, one of each of the main Selenium supported programming languages. Currently, only the Python, JavaScript, and C# sub-projects are complete.  
+This project will contain sub-projects, one of each of the main Selenium supported programming languages. Currently, only the Python, JavaScript, C#, and Ruby sub-projects are complete.  
 Each sub-project's framework will be independent, built with its own reporting system, logging, and screenshot capture on test failure.
 
 Note:
@@ -60,6 +60,15 @@ npm install
 dotnet restore
 ```
 
+### Install Ruby dependencies:
+0. CD the `ruby_basics/` subfolder 
+1. Download and install Ruby 3.x from the [official website](https://rubyinstaller.org/downloads/)
+2. Ensure Google Chrome is installed 
+3. Install Ruby dependencies by running: 
+```bash
+bundle install
+```
+
 
 ## Running tests
 
@@ -76,6 +85,10 @@ npm test
 ```bash
 .\run_tests.ps1
 ```
+#### Ruby (CD the `ruby_basics/` folder)
+```bash
+bundle exec rspec spec
+```
 
 ### Running a single test script:
 #### Python (CD the `python_basics/` folder)
@@ -90,14 +103,23 @@ npm run test:file -- src/tests/navigation.test.js
 ```bash
 dotnet test --filter "FullyQualifiedName~NavigationTest"
 ```
+#### Ruby (CD the `ruby_basics/` folder)
+```bash
+bundle exec rspec spec/file_upload_spec.rb
+```
 
-### Running all JavaScript tests headless:
+### Running all tests in headless mode:
 #### JavaScript (CD the `javascript_basics/` folder)
 ```bash
 npm run test:headless
 ```
+#### Ruby (CD the `ruby_basics/` folder)
+```bash
+$env:HEADLESS = "true"; bundle exec rspec
+Remove-Item Env:HEADLESS
+```
 
-### Running all JavaScript tests in FAST headless (CI-optimized):
+### Running all tests in FAST headless mode (CI-optimized):
 #### JavaScript (CD the `javascript_basics/` folder)
 ```bash
 npm run test:fast
@@ -158,6 +180,21 @@ npm run test:fast
 │   ├── csharp_basics.csproj              # C# project definition file. Declares dependencies, build settings, output behaviors, etc. 
 │   └── run_tests.ps1                     # PowerShell automation script for executing all tests and generating reports 
 │
+├── ruby_basics/                          # Ruby subproject
+│   ├── results/                          # Stores Ruby test run output artifacts
+│   │   ├── logs/                         # Timestamped Ruby test run logs
+│   │   ├── screenshots/                  # Screenshots captured on Ruby test run failures 
+│   │   └── report.html                   # Standard Ruby HTML report (auto-generated each run)
+│   ├── spec/                             # Ruby Selenium test scripts
+│   │   └── spec_helper.rb                # Global test harness configuring RSpec, WebDriver lifecycle, logging, screenshots, HTML report generation, etc.
+│   ├── src/support/                      # Utility scripts shared across tests
+│   │   ├── driver_setup.rb               # Centralized Selenium WebDriver setup/teardown, including headless mode 
+│   │   └── logger.rb                     # Custom logger utility script 
+│   ├── temp/                             # Temporary files used by tests (e.g., file-upload temp files) 
+│   ├── .rspec                            # RSpec configuration file that defines default options and automatically loads 
+│   ├── gemfile                           # Declares Ruby gem dependencies required to run the Selenium test framework 
+│   └── gemfile.lock                      # Locks exact gem versions to ensure dependency consistency across different environments  
+│
 ├── .gitignore                            # Files and directories excluded from version control 
 ├── README.md                             # Project overview, setup, instructions, and documentation
 ```
@@ -177,16 +214,19 @@ npm run test:fast
 
 ## Logging and Reporting Results:
 - All Python tests have logs available in the console, the log file, and generate the report `python_basics/results/latest_report.html`
-    - Drag and drop the HTML into your browser and you will see the standard pytest report.
-    - Logs are written in both the console and to the `python_basics/logs/DATE_TIME.log` file.
+    - Drag and drop the HTML file into your browser and you will see the standard pytest report.
+    - Logs are written in both the console and to the `python_basics/logs/` folder.
 - All JavaScript tests have logs available in the console, the log file, and generate the report `javascript_basics/results/report/mochawesome.html`
-    - Drag and drop the HTML into your browser and you will see the standard MochaAwesome report. 
-    - Logs are written in both the console and to the `javascript_basics/results/logs/test_run_DATE_TIME.log` file. 
+    - Drag and drop the HTML file into your browser and you will see the standard MochaAwesome report. 
+    - Logs are written in both the console and to the `javascript_basics/results/logs/` folder. 
 - All C# tests have logs written. Allure reports are only generated when using the `run_tests.ps1` script. 
-    - Logs are available in the `csharp_basics/results/logs/` file.
-    - When using the `run_tests.ps1` script, reports are generated and opened automatically in a chrome browser. 
-        - This is because Allure reports generated with `allure generate` are static files that cannot be dragged into web browsers like the other sub-projects as they pose a security risk.
+    - Logs are available in the `csharp_basics/results/logs/` folder.
+    - When using the `run_tests.ps1` script, reports are generated and opened automatically in a Chrome browser. 
+        - This is because Allure reports generated with `allure generate` are static files that cannot be dragged into web browsers like the other sub-projects due to browser restrictions on local dynamic content.
         - To combat this, I used `allure serve` in the PowerShell script to host a local webserver and open the dynamic report automatically, revealing a standard Allure report. 
+- All Ruby tests have logs available in the log file and generate the report `ruby_basics/results/report.html`
+    - Drag and drop the HTML file into your browser and you will see the standard Ruby report 
+    - Logs are written to the `ruby_basics/results/logs/` folder.  
 
 
 ## Screenshot on Failure:
@@ -196,7 +236,9 @@ npm run test:fast
     - Screenshots are stored in the `javascript_basics/results/screenshots/` folder with labeled, timestamped file names. 
 - When a C# test fails, a screenshot is automatically captured via my own automation layer (BaseTest + ScreenshotHelper).
     - Screenshots are stored in the `csharp_basics/results/screenshots/` folder with labeled, timestamped file names. 
+- When a Ruby test fails, a screenshot is automatically captured via my own automation layer (spec_helper.rb).
+    - Screenshots are stored in the `ruby_basics/results/screenshots/` folder with labeled, timestamped file names. 
 
 
 ## Next Steps:
-- Begin the Ruby subproject
+- Begin the Java subproject 
