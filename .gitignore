@@ -72,6 +72,25 @@ ruby_basics/temp/
 
 
 ############################################
+# JAVA
+############################################
+# Maven build artifacts
+java_basics/target/
+**/target/
+
+# Java test artifacts
+java_basics/results/
+java_basics/temp/
+
+# Compiled classes
+*.class
+
+# IntelliJ / build system cache
+*.idea/
+*.iml
+
+
+############################################
 # SHARED TEMP FILES
 ############################################
 temp/
