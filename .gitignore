@@ -16,6 +16,7 @@ python_basics/results/
 python_basics/temp/
 
 
+
 ############################################
 # JAVASCRIPT / NODE
 ############################################
@@ -35,13 +36,6 @@ mochawesome.json
 javascript_basics/temp/
 
 
-############################################
-# TYPESCRIPT (if used later)
-############################################
-*.tsbuildinfo
-dist/
-build/
-
 
 ############################################
 # CSHARP / DOTNET
@@ -59,6 +53,7 @@ csharp_basics/temp/
 *.suo
 
 
+
 ############################################
 # RUBY
 ############################################
@@ -69,6 +64,7 @@ vendor/bundle/
 # Ruby test artifacts
 ruby_basics/results/
 ruby_basics/temp/
+
 
 
 ############################################
@@ -88,6 +84,21 @@ java_basics/temp/
 # IntelliJ / build system cache
 *.idea/
 *.iml
+
+
+
+############################################
+# KOTLIN / GRADLE
+############################################
+# Gradle build artifacts
+kotlin_basics/build/
+kotlin_basics/.gradle/
+.gradle/
+
+# Kotlin test artifacts
+kotlin_basics/results/
+kotlin_basics/temp/
+
 
 
 ############################################
