@@ -1,8 +1,11 @@
 # run_tests.ps1
 param(
     [string]$Configuration = "Debug",
-    [string]$Framework = "net8.0"
+    [string]$Framework = "net8.0",
+    [switch]$Headless
 )
+
+if ($Headless) { $env:HEADLESS = "true" }
 
 # Paths
 $resultsPath = "bin\$Configuration\$Framework\results\allure-results"

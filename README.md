@@ -4,7 +4,7 @@
 This project demonstrates my proficiency with [Selenium](https://www.selenium.dev/) for web application automation testing.  
 Each subproject includes common, practical test case examples. These tests include: alerts, checkboxes, dropdowns, dynamic controls, file uploads, form authentication, frames, navigation, and failure handling.  
 
-This project contains sub-projects, one of each of the main programming languages supported by Selenium. These languages are Python, JavaScript, C#, Ruby, Java, and Kotlin.    
+This project contains subprojects, one of each of the main programming languages supported by Selenium. These languages are Python, JavaScript, C#, Ruby, Java, and Kotlin.    
 Each subproject's framework is independent and built with its own industry-standard reporting system, logging, and screenshot capture on test failure.
 
 Notes:
@@ -36,7 +36,6 @@ pip install -r requirements.txt
 3. (OPTIONAL) Deactivate your virtual environment by running:
 ```bash
 deactivate
-rmdir /s /q .venv
 ```
 
 ### Install JavaScript dependencies: 
@@ -88,85 +87,89 @@ bundle install
 ## Running tests
 
 ### Running all tests:
-#### Python (CD the `python_basics/` folder)
+1. Python (CD the `python_basics/` folder)
 ```bash
 pytest
 ```
-#### JavaScript (CD the `javascript_basics/` folder)
+2. JavaScript (CD the `javascript_basics/` folder)
 ```bash
 npm test
 ```
-#### C# (CD the `csharp_basics/` folder)
+3. C# (CD the `csharp_basics/` folder)
 ```bash
 .\run_tests.ps1
 ```
-#### Ruby (CD the `ruby_basics/` folder)
+4. Ruby (CD the `ruby_basics/` folder)
 ```bash
 bundle exec rspec spec
 ```
-#### Java (CD the `java_basics/` folder)
+5. Java (CD the `java_basics/` folder)
 ```bash
 mvn test
 ```
-#### Kotlin (CD the `kotlin_basics/` folder)
+6. Kotlin (CD the `kotlin_basics/` folder)
 ```bash
 .\gradlew test
 ```
 
 
 ### Running a single test script:
-#### Python (CD the `python_basics/` folder)
+1. Python (CD the `python_basics/` folder)
 ```bash
 pytest tests/test_navigation.py
 ```
-#### JavaScript (CD the `javascript_basics/` folder)
+2. JavaScript (CD the `javascript_basics/` folder)
 ```bash
 npm run test:file -- src/tests/navigation.test.js
 ```
-#### C# (CD the `csharp_basics/` folder)
+3. C# (CD the `csharp_basics/` folder)
 ```bash
 dotnet test --filter "FullyQualifiedName~NavigationTest"
 ```
-#### Ruby (CD the `ruby_basics/` folder)
+4. Ruby (CD the `ruby_basics/` folder)
 ```bash
 bundle exec rspec spec/navigation_spec.rb
 ```
-#### Java (CD the `java_basics/` folder)
+5. Java (CD the `java_basics/` folder)
 ```bash
 mvn -Dtest=NavigationTest test
 ```
-#### Kotlin (CD the `kotlin_basics/` folder)
+6. Kotlin (CD the `kotlin_basics/` folder)
 ```bash
 .\gradlew test --tests "tests.NavigationTest"
 ```
 
 
 ### Running all tests in headless mode:
-#### JavaScript (CD the `javascript_basics/` folder)
+1. Python (CD the `python_basics/` folder)
+```bash
+pytest --headless
+```
+2. JavaScript (CD the `javascript_basics/` folder)
 ```bash
 npm run test:headless
+npm run test:fast # FAST headless mode (CI-optimized) 
 ```
-#### Ruby (CD the `ruby_basics/` folder)
+3. C# (CD the `csharp_basics/` folder)
+```bash
+.\run_tests.ps1 -Headless
+Remove-Item Env:\HEADLESS # Run this after the headless test run completes
+```
+4. Ruby (CD the `ruby_basics/` folder)
 ```bash
 $env:HEADLESS = "true"; bundle exec rspec
-Remove-Item Env:HEADLESS
+Remove-Item Env:HEADLESS # Run this after the headless test run completes
 ```
-### Java (CD the `java_basics/` folder)
+5. Java (CD the `java_basics/` folder)
 ```bash
 mvn -Dheadless=true test
 ```
-#### Kotlin (CD the `kotlin_basics/` folder)
+6. Kotlin (CD the `kotlin_basics/` folder)
 ```bash
 $env:HEADLESS="true"; .\gradlew test
-Remove-Item Env:HEADLESS
+Remove-Item Env:HEADLESS # Run this after the headless test run completes 
 ```
 
-
-### Running all tests in FAST headless mode (CI-optimized):
-#### JavaScript (CD the `javascript_basics/` folder)
-```bash
-npm run test:fast
-```
 
 ## File Structure:
 ```bash
@@ -297,10 +300,11 @@ npm run test:fast
 |Form Authentication|success/failure with valid/invalid credentials|
 |Checkboxes|toggling checkboxes on/off|
 |Dropdown|making selections|
-|Dynamic Controls|Remove/Add and Enable/Disable|
-|Alerts|Validate each JavaScript alert|
+|Dynamic Controls|remove/Add and Enable/Disable|
+|Alerts|validate each JavaScript alert|
 |Frames|frame switching and text validation|
 |File Upload|create, upload, and delete temporary files|
+|Intentional Failure|validate screenshot-on-failure|
 
 
 ## Logging and Reporting Results:
@@ -313,7 +317,7 @@ npm run test:fast
 - All C# tests have logs written. Allure reports are only generated when using the `run_tests.ps1` script. 
     - Logs are available in the `csharp_basics/results/logs/` folder.
     - When using the `run_tests.ps1` script, reports are generated and opened automatically in a Chrome browser. 
-        - This is because Allure reports generated with `allure generate` are static files that cannot be dragged into web browsers like the other sub-projects due to browser restrictions on local dynamic content.
+        - This is because Allure reports generated with `allure generate` are static files that cannot be dragged into web browsers like the other subprojects due to browser restrictions on local dynamic content.
         - To combat this, I used `allure serve` in the PowerShell script to host a local webserver and open the dynamic report automatically, revealing a standard Allure report. 
 - All Ruby tests have logs available in the log file and generate the report `ruby_basics/results/report.html`
     - Drag and drop the HTML file into your browser and you will see the standard Ruby report 
@@ -321,7 +325,7 @@ npm run test:fast
 - All Java tests have logs available in the console, the log file, and generate the report `java_basics/target/surefire-reports/index.html`  
     - Drag and drop the HTML file into your browser and you will see the standard Maven report.  
     - Logs are written in both the console and to the `java_basics/results/logs/` folder.  
-- All Kotlin tests have logs availble in the generated log file and generate the report `kotlin_basics/results/report.html`
+- All Kotlin tests have logs available in the generated log file and generate the report `kotlin_basics/results/report.html`
     - Drag and drop the HTML file into your browser and you will see the standard Kotlin report. 
     - Logs are written to the `kotlin_basics/results/logs/` folder. 
 
@@ -337,9 +341,20 @@ npm run test:fast
     - Screenshots are stored in the `ruby_basics/results/screenshots/` folder with labeled, timestamped file names.  
 - When a Java test fails, a screenshot is automatically captured via my the `ScreenshotListener.java` listener script.  
     - Screenshots are stored in the `java_basics/results/screenshots/` folder with labeled, timestamped file names.  
-- WHen a Kotlin test fails, a screenshot is automatically captured via my `ScreenshotListener.kt` listener script. 
+- When a Kotlin test fails, a screenshot is automatically captured via my `ScreenshotListener.kt` listener script. 
     - Screenshots are stored in the `kotlin_basics/results/screenshots/` folder with labeled, timestamped file names. 
 
 
 ## Final Thoughts: 
-asdf
+This project was fun!  
+
+Four weeks ago, I had very Selenium experience. I had only messed with the IDE to try recording some test scripts. Now I believe I would be comfortable being handed a professional project or creating a new one.  
+
+I also had no experience with Ruby or Kotlin, and funny enough, Ruby was the easiest subproject to setup. I was surprised how similar Kotlin and Java operate as well; the Kotlin subproject is nearly identical to the Java subproject.  
+
+I did not experience any major blockers throughout this project, having learned a lot from my Playwright automation project. I used TestNG for Java/Kotlin from the beginning to avoid the JUnit5 issues I was seeing with Playwright. The C# subproject took the longest as I used Allure reporting for the first time. I was having issues with the HTML report being generated as a static file that could not be dragged into an open browser like I wanted. I ended up having to generate dynamic reports that opened automatically with the .ps1 test runner. I doubt it's a big deal since I imagine many engineers would prefer test reports open automatically, but I personally prefer having report files generated that can be manually opened and stored.  
+
+In conclusion, I am very proud of this project and I will definitely be using it throughout my career as a cheatsheet and I welcome others to copy my homework!  
+
+Thank you for reading,  
+Mason Garza 

@@ -31,6 +31,16 @@ namespace csharp_basics.tests
             ChromeOptions options = new ChromeOptions();
             options.AddArgument("--start-maximized");
 
+            bool headless =
+                string.Equals(Environment.GetEnvironmentVariable("HEADLESS"), "true", StringComparison.OrdinalIgnoreCase) ||
+                Environment.GetEnvironmentVariable("HEADLESS") == "1";
+
+            if (headless)
+            {
+                options.AddArgument("--headless=new");
+                options.AddArgument("--window-size=1920,1080");
+            }
+
             // Selenium Manager will automatically resolve and manage the correct ChromeDriver
             driver = new ChromeDriver(options);
 
