@@ -18,7 +18,7 @@ All interactions, assertions, and reporting are handled through custom scripts u
 (All commands must be run inside their respective subproject folders.)
 ### Clone the repository 
 ```bash
-git clone https://github.com/your-username/selenium-tests.git
+git clone https://github.com/MasonGarza7/selenium-tests.git
 cd selenium-tests
 ```
 
