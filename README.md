@@ -348,7 +348,7 @@ Remove-Item Env:HEADLESS # Run this after the headless test run completes
 ## Final Thoughts: 
 This project was fun!  
 
-Four weeks ago, I had very Selenium experience. I had only messed with the IDE to try recording some test scripts. Now I believe I would be comfortable being handed a professional project or creating a new one.  
+Four weeks ago, I had very little Selenium experience. I had only messed with the IDE to try recording some test scripts. Now I believe I would be comfortable being handed a professional project or creating a new one.  
 
 I also had no experience with Ruby or Kotlin, and funny enough, Ruby was the easiest subproject to setup. I was surprised how similar Kotlin and Java operate as well; the Kotlin subproject is nearly identical to the Java subproject.  
 
